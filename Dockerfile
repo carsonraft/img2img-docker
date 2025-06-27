@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 # Install just Python first - minimal setup
 RUN apt-get update --yes && \
-    apt-get install --yes --no-install-recommends python3.10 python3-pip && \
+    apt-get install --yes --no-install-recommends python3.10 python3-pip git && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install minimal packages needed for model download
