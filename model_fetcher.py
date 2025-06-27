@@ -45,6 +45,8 @@ def download_model(model_url: str):
             StableDiffusionSafetyChecker.from_pretrained(
                 SAFETY_MODEL_ID,
                 cache_dir=model_cache_path,
+                torch_dtype="auto",
+                low_cpu_mem_usage=True
             )
             print("Safety checker downloaded successfully!")
 
@@ -52,11 +54,17 @@ def download_model(model_url: str):
             StableDiffusionPipeline.from_pretrained(
                 model_id,
                 cache_dir=model_cache_path,
+                torch_dtype="auto",
+                low_cpu_mem_usage=True,
+                use_safetensors=True
             )
             print(f"Model {model_id} downloaded successfully!")
             
         except Exception as e:
             print(f"ERROR downloading model: {e}")
+            print(f"Error type: {type(e)}")
+            import traceback
+            print(f"Full traceback: {traceback.format_exc()}")
             raise e
             
     else:
