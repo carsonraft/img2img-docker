@@ -24,13 +24,20 @@ RUN apt-get update --yes && \
 
 WORKDIR /opt/ckpt
 
-COPY requirements.txt /opt/ckpt/requirements.txt
+# Install Python and minimal dependencies first for model download
 RUN pip3 install torch==2.0.0 torchvision
+RUN pip3 install diffusers transformers accelerate safetensors
+
+# Copy and run model fetcher FIRST to fail fast
+COPY model_fetcher.py /opt/ckpt/model_fetcher.py
+RUN python3 model_fetcher.py --model_url=${MODEL_URL}
+RUN echo "Model download completed successfully!"
+
+# Now install remaining dependencies 
+COPY requirements.txt /opt/ckpt/requirements.txt
 RUN pip3 install -r /opt/ckpt/requirements.txt
 
+# Copy remaining files
 COPY . /opt/ckpt
-
-RUN python3 model_fetcher.py --model_url=${MODEL_URL}
-RUN echo "Model URL: $MODEL_URL"
 
 CMD python3 -u /opt/ckpt/runpod_infer.py --model_url="$MODEL_URL"
