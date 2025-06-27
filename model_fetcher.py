@@ -25,6 +25,14 @@ def download_model(model_url: str):
     '''
     print(f"Starting model download from: {model_url}")
     
+    # Test basic connectivity first
+    try:
+        print("Testing HuggingFace connectivity...")
+        response = requests.get("https://huggingface.co", timeout=30)
+        print(f"HuggingFace reachable: {response.status_code}")
+    except Exception as e:
+        print(f"WARNING: Cannot reach HuggingFace: {e}")
+    
     model_cache_path = Path(MODEL_CACHE_DIR)
     if model_cache_path.exists():
         print(f"Removing existing cache directory: {model_cache_path}")
