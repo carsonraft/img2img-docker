@@ -23,31 +23,44 @@ def download_model(model_url: str):
     '''
     Downloads the model from the URL passed in.
     '''
+    print(f"Starting model download from: {model_url}")
+    
     model_cache_path = Path(MODEL_CACHE_DIR)
     if model_cache_path.exists():
+        print(f"Removing existing cache directory: {model_cache_path}")
         shutil.rmtree(model_cache_path)
     model_cache_path.mkdir(parents=True, exist_ok=True)
+    print(f"Created cache directory: {model_cache_path}")
 
     # Check if the URL is from huggingface.co, if so, grab the model repo id.
     parsed_url = urlparse(model_url)
+    print(f"Parsed URL - netloc: {parsed_url.netloc}, path: {parsed_url.path}")
+    
     if parsed_url.netloc == "huggingface.co":
         model_id = f"{parsed_url.path.strip('/')}"
+        print(f"Extracted model ID: {model_id}")
         
-        print(f"Downloading model: {model_id}")
-        
-        StableDiffusionSafetyChecker.from_pretrained(
-            SAFETY_MODEL_ID,
-            cache_dir=model_cache_path,
-        )
+        try:
+            print("Downloading safety checker...")
+            StableDiffusionSafetyChecker.from_pretrained(
+                SAFETY_MODEL_ID,
+                cache_dir=model_cache_path,
+            )
+            print("Safety checker downloaded successfully!")
 
-        StableDiffusionPipeline.from_pretrained(
-            model_id,
-            cache_dir=model_cache_path,
-        )
-        
-        print(f"Model {model_id} downloaded successfully!")
+            print(f"Downloading main model: {model_id}")
+            StableDiffusionPipeline.from_pretrained(
+                model_id,
+                cache_dir=model_cache_path,
+            )
+            print(f"Model {model_id} downloaded successfully!")
+            
+        except Exception as e:
+            print(f"ERROR downloading model: {e}")
+            raise e
+            
     else:
-        print("Non-HuggingFace URLs not supported in this version")
+        print(f"ERROR: Non-HuggingFace URL not supported: {parsed_url.netloc}")
         raise ValueError("Only HuggingFace model URLs are supported")
 
 
