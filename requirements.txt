@@ -1,0 +1,9 @@
+xformers==0.0.20
+diffusers==0.13.1
+transformers==4.27.4
+accelerate==0.18.0
+huggingface-hub==0.13.3
+scipy==1.10.1
+ftfy==6.1.1
+runpod~=1.7.9
+Pillow==9.5.0
