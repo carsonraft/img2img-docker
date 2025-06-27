@@ -14,7 +14,7 @@ RUN apt-get update --yes && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install minimal packages needed for model download
-RUN pip3 install diffusers transformers accelerate safetensors
+RUN pip3 install torch==2.0.0 torchvision diffusers transformers accelerate safetensors
 
 WORKDIR /opt/ckpt
 
