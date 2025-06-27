@@ -32,22 +32,23 @@ def download_model(model_url: str):
     parsed_url = urlparse(model_url)
     if parsed_url.netloc == "huggingface.co":
         model_id = f"{parsed_url.path.strip('/')}"
+        
+        print(f"Downloading model: {model_id}")
+        
+        StableDiffusionSafetyChecker.from_pretrained(
+            SAFETY_MODEL_ID,
+            cache_dir=model_cache_path,
+        )
+
+        StableDiffusionPipeline.from_pretrained(
+            model_id,
+            cache_dir=model_cache_path,
+        )
+        
+        print(f"Model {model_id} downloaded successfully!")
     else:
-        downloaded_model = requests.get(model_url, stream=True, timeout=600)
-        with open(model_cache_path / "model.zip", "wb") as f:
-            for chunk in downloaded_model.iter_content(chunk_size=1024):
-                if chunk:
-                    f.write(chunk)
-
-    StableDiffusionSafetyChecker.from_pretrained(
-        SAFETY_MODEL_ID,
-        cache_dir=model_cache_path,
-    )
-
-    StableDiffusionPipeline.from_pretrained(
-        model_id,
-        cache_dir=model_cache_path,
-    )
+        print("Non-HuggingFace URLs not supported in this version")
+        raise ValueError("Only HuggingFace model URLs are supported")
 
 
 # ---------------------------------------------------------------------------- #
